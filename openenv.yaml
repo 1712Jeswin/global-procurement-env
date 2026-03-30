@@ -1,0 +1,108 @@
+name: global-procurement-env
+version: "1.0.0"
+description: >
+  AI procurement simulation: agent sources materials from India, EU, USA
+  under real trade policies and supply-chain disruptions.
+
+# ── Server ────────────────────────────────────────────────────────────────────
+server:
+  host: "0.0.0.0"
+  port: 7860
+  base_url: "http://localhost:7860"
+
+# ── Endpoints ─────────────────────────────────────────────────────────────────
+endpoints:
+  health: GET  /health
+  reset:  POST /reset
+  step:   POST /step
+  state:  GET  /state
+
+# ── Action Space ──────────────────────────────────────────────────────────────
+action_space:
+  type: Discrete
+  # Task 1: 0–3 | Task 2: 0–5 | Task 3: 0–6
+  n: 7
+  actions:
+    0: approve_cheapest
+    1: approve_fastest
+    2: approve_greenest
+    3: reject_all
+    4: partial_order
+    5: negotiate
+    6: escalate
+
+# ── Observation Space ─────────────────────────────────────────────────────────
+# Field names MUST match the JSON keys returned by GET /state and POST /step.
+observation_space:
+  type: Dict
+  fields:
+    - name: step
+      type: int
+    - name: budget_remaining
+      type: float
+    - name: inventory
+      type: object
+    - name: suppliers
+      type: array
+    - name: active_disruptions
+      type: array
+    - name: policy_violations_this_episode
+      type: int
+    - name: current_task
+      type: int
+    - name: grader_score
+      type: float
+      nullable: true
+
+# ── Step Response (additional fields beyond Observation) ─────────────────────
+step_response_extra_fields:
+  reward:
+    type: float
+    description: Scalar reward for the action just taken
+  reward_breakdown:
+    type: object
+    fields:
+      value:           float
+      compliance:      float
+      cost_efficiency: float
+      delivery_speed:  float
+      carbon_score:    float
+  done:
+    type: boolean
+    description: True when the episode has ended
+  info:
+    type: object
+    description: Auxiliary diagnostic information (contents vary)
+
+# ── Tasks ─────────────────────────────────────────────────────────────────────
+tasks:
+  - id: task_1_easy
+    name: "Easy — India Only"
+    description: Stable suppliers, simple compliance rules, action space 0–3
+    action_range: [0, 3]
+    max_steps: 10
+
+  - id: task_2_medium
+    name: "Medium — India + EU"
+    description: Tariff volatility, multi-supplier negotiation, action space 0–5
+    action_range: [0, 5]
+    max_steps: 15
+
+  - id: task_3_hard
+    name: "Hard — All 3 Countries"
+    description: Full geopolitical disruptions, strict carbon limits, action space 0–6
+    action_range: [0, 6]
+    max_steps: 20
+
+# ── Reward ────────────────────────────────────────────────────────────────────
+reward_range: [-1.0, 1.0]
+reward:
+  components:
+    - name: compliance
+      weight: 0.30
+    - name: cost_efficiency
+      weight: 0.30
+    - name: delivery_speed
+      weight: 0.20
+    - name: carbon_score
+      weight: 0.20
