@@ -1,0 +1,9 @@
+# task2_medium.py
+TASK_ID = 2
+MAX_STEPS = 50
+VALID_ACTIONS = [0, 1, 2, 3, 4, 5]
+SUPPLIER_COUNTRIES = ["India", "EU"]
+NUM_SUPPLIERS = 6
+DISRUPTIONS_ENABLED = True
+ACTIVE_DISRUPTIONS = ["port_strike_india"]  # Only one in Task 2
+STARTING_BUDGET = 200000.0

@@ -1,6 +1,6 @@
 import json
 import os
-from supply_chain_sim import SupplyChainState
+from env.supply_chain_sim import SupplyChainState
 
 POLICY_DIR = os.path.join(os.path.dirname(__file__), "..", "policies")
 
