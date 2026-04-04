@@ -27,6 +27,9 @@ class Observation(BaseModel):
     policy_violations_this_episode: int
     current_task: int
     grader_score: Optional[float] = None
+    cumulative_lead_days: int = 0
+    cumulative_carbon: float = 0.0
+    available_supplier_count: int = 0
 
 
 class Action(BaseModel):

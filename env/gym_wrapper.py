@@ -56,9 +56,7 @@ class ProcurementGymWrapper(gym.Env):
         a normalised float32 array for the neural network.
 
         Fields sourced from Observation: budget_remaining, inventory, step,
-          policy_violations_this_episode.
-        Fields sourced from internal _state directly: lead_days, carbon.
-        (These are tracked in SupplyChainState but not surfaced in Observation.)
+          policy_violations_this_episode, cumulative_lead_days, cumulative_carbon.
         """
         MAX_BUDGET = 200000.0
 
@@ -68,11 +66,6 @@ class ProcurementGymWrapper(gym.Env):
         else:
             obs_dict = obs
 
-        # Read lead_days and carbon from internal state (not in Observation schema)
-        internal = self.env._state
-        lead_days = internal.lead_days if internal is not None else 0
-        carbon = internal.carbon if internal is not None else 0.0
-
         inventory = obs_dict.get("inventory", {})
 
         return np.array([
@@ -80,8 +73,8 @@ class ProcurementGymWrapper(gym.Env):
             inventory.get("steel", 0.0) / 1000.0,
             inventory.get("chips", 0.0) / 1000.0,
             inventory.get("fabric", 0.0) / 1000.0,
-            lead_days / 30.0,
-            carbon / 50.0,
+            obs_dict.get("cumulative_lead_days", 0) / 30.0,
+            obs_dict.get("cumulative_carbon", 0.0) / 50.0,
             obs_dict.get("policy_violations_this_episode", 0) / 10.0,
             obs_dict.get("step", 0) / 100.0,
         ], dtype=np.float32)

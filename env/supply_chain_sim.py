@@ -45,10 +45,9 @@ def apply_action(state: SupplyChainState, action: int, available_suppliers: list
             state.lead_days += result["lead_days_added"]
             state.carbon += result["carbon_added"]
             
-            # Arbitrary logic: Add evenly to all inventory as generic purchase
-            state.inventory["steel"] += 1.0
-            state.inventory["chips"] += 1.0
-            state.inventory["fabric"] += 1.0
+            # Targeted increment using the supplier's declared material
+            material = supplier.get("material", "steel")
+            state.inventory[material] = state.inventory.get(material, 0.0) + 1.0
 
     elif action == 1:  # approve_fastest
         result["action_label"] = "approve_fastest"
@@ -64,9 +63,8 @@ def apply_action(state: SupplyChainState, action: int, available_suppliers: list
             state.lead_days += result["lead_days_added"]
             state.carbon += result["carbon_added"]
             
-            state.inventory["steel"] += 1.0
-            state.inventory["chips"] += 1.0
-            state.inventory["fabric"] += 1.0
+            material = supplier.get("material", "steel")
+            state.inventory[material] = state.inventory.get(material, 0.0) + 1.0
 
     elif action == 2:  # approve_greenest
         result["action_label"] = "approve_greenest"
@@ -82,9 +80,8 @@ def apply_action(state: SupplyChainState, action: int, available_suppliers: list
             state.lead_days += result["lead_days_added"]
             state.carbon += result["carbon_added"]
             
-            state.inventory["steel"] += 1.0
-            state.inventory["chips"] += 1.0
-            state.inventory["fabric"] += 1.0
+            material = supplier.get("material", "steel")
+            state.inventory[material] = state.inventory.get(material, 0.0) + 1.0
 
     elif action == 3:  # reject_all
         result["action_label"] = "reject_all"
@@ -110,9 +107,8 @@ def apply_action(state: SupplyChainState, action: int, available_suppliers: list
             state.lead_days += result["lead_days_added"]
             state.carbon += result["carbon_added"]
             
-            state.inventory["steel"] += 1.0
-            state.inventory["chips"] += 1.0
-            state.inventory["fabric"] += 1.0
+            material = discounted_supplier.get("material", "steel")
+            state.inventory[material] = state.inventory.get(material, 0.0) + 1.0
 
     elif action == 5:  # split_order
         result["action_label"] = "split_order"
@@ -145,9 +141,9 @@ def apply_action(state: SupplyChainState, action: int, available_suppliers: list
             state.lead_days += result["lead_days_added"]
             state.carbon += result["carbon_added"]
 
-            state.inventory["steel"] += 1.0
-            state.inventory["chips"] += 1.0
-            state.inventory["fabric"] += 1.0
+            for supplier in [s1, s2]:
+                mat = supplier.get("material", "steel")
+                state.inventory[mat] = state.inventory.get(mat, 0.0) + 0.5
 
     elif action == 6:  # escalate
         result["action_label"] = "escalate"
