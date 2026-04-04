@@ -37,13 +37,15 @@ def choose_action(observation: dict, task_id: int) -> int:
     """Uses the LLM to select an action given the current observation."""
     max_action = {1: 3, 2: 5, 3: 6}[task_id]
 
+    available = observation.get('available_supplier_count', 0)
     user_msg = f"""Current procurement state:
 - Step: {observation.get('step', 0)}
 - Budget remaining: ${observation.get('budget_remaining', 0):,.0f}
 - Violations so far: {observation.get('policy_violations_this_episode', 0)}
 - Active disruptions: {observation.get('active_disruptions', [])}
-- Available suppliers: {len([s for s in observation.get('suppliers', []) if s.get('available')])}
+- Available suppliers: {available}
 
+{"WARNING: No suppliers available this step. Use action 3 (reject_all) or action 6 (escalate) to avoid wasting the step." if available == 0 else ""}
 Choose action 0-{max_action}. Reply with ONE integer only."""
 
     try:

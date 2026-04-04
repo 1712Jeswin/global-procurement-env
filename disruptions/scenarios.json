@@ -13,6 +13,7 @@
         "trigger_step": 15,
         "min_task": 3,
         "duration_steps": 10,
+        "stochastic": true,
         "affected_suppliers": ["EU_01", "EU_02", "FR_01"],
         "effect": "lead_time_multiplier",
         "multiplier": 2.5,

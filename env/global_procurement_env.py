@@ -174,6 +174,8 @@ class GlobalProcurementEnv:
             )
             for s in self._state.suppliers
         ]
+        available_count = sum(1 for s in self._state.suppliers if s.get("available", True))
+
         return Observation(
             step=self._state.step_count,
             budget_remaining=self._state.budget,
@@ -183,6 +185,9 @@ class GlobalProcurementEnv:
             policy_violations_this_episode=self._state.violations,
             current_task=self.task,
             grader_score=self._grader_score,
+            cumulative_lead_days=self._state.lead_days,
+            cumulative_carbon=self._state.carbon,
+            available_supplier_count=available_count,
         )
 
     def _load_suppliers_for_task(self, task: int) -> list:
