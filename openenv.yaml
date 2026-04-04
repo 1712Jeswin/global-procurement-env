@@ -53,6 +53,12 @@ observation_space:
     - name: grader_score
       type: float
       nullable: true
+    - name: cumulative_lead_days
+      type: int
+    - name: cumulative_carbon
+      type: float
+    - name: available_supplier_count
+      type: int
 
 # ── Step Response (additional fields beyond Observation) ─────────────────────
 step_response_extra_fields:
